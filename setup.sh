@@ -24,16 +24,19 @@ sync_d() {
     local src="$1" dst="$2"
     [[ ! -d "$src" ]] && return
 
-    # Guard: if target already exists as a subdirectory of source, stop.
-    # Prevents nvim/nvim/, hypr/hypr/ style duplicates when the script is
-    # run after full installation (e.g. nvim installed via cp -rf).
-    case "$dst" in
-        "$src"/*) echo "⚠️  skip: destination $dst is inside source $src — would create nested duplicates"; return ;;
-    esac
+    # The basename of the source config directory (e.g. "hypr" from ~/.config/hypr).
+    local base
+    base=$(basename "$src")
 
     mkdir -p "$dst"
     find "$src" -type f | while IFS= read -r f; do
+        # Skip files nested under a subdirectory matching the config name.
+        # e.g. ~/.config/omarchy/omarchy/... → skip omarchy/omarchy/*
         local rel="${f#$CONF/}"
+        case "$rel" in
+            "$base"/*) printf "⚠️  skip (nested duplicate): %s\n" "$rel"; continue ;;
+        esac
+
         local dest="$dst/$rel"
         if [[ ! -f "$dest" ]]; then
             mkdir -p "$(dirname "$dest")"
