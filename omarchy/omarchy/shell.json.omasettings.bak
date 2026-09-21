@@ -1,12 +1,5 @@
 {
-  "version": 1,
-  "idle": {
-    "lock": 300,
-    "screensaver": 150
-  },
   "bar": {
-    "position": "top",
-    "transparent": true,
     "centerAnchor": "omarchy.clock",
     "layout": {
       "center": [
@@ -14,15 +7,9 @@
           "id": "omarchy.indicators"
         },
         {
-          "id": "omarchy.microphone"
-        },
-        {
-          "id": "omaconnect"
-        },
-        {
-          "id": "omarchy.clock",
           "format": "ddd d MMM HH:mm",
           "formatAlt": "d MMMM 'W'ww yyyy",
+          "id": "omarchy.clock",
           "verticalFormat": "HH\n—\nmm"
         },
         {
@@ -32,10 +19,10 @@
           "id": "omarchy.weather"
         },
         {
-          "id": "omarchy.system-update"
+          "id": "omaconnect"
         },
         {
-          "id": "omarchy.media"
+          "id": "omarchy.system-update"
         }
       ],
       "left": [
@@ -46,16 +33,18 @@
           "id": "omarchy.workspaces"
         },
         {
+          "id": "omarchy.active-window"
+        },
+        {
           "id": "io.github.twiking.omasettings"
         }
       ],
       "right": [
         {
-          "id": "omarchy.tray",
-          "pinned": [
-            "AmneziaVPN"
-          ],
-          "hidden": []
+          "id": "omarchy.tray"
+        },
+        {
+          "id": "crmne.hyprmoncfg"
         },
         {
           "id": "omarchy.agents"
@@ -76,7 +65,14 @@
           "id": "omarchy.power"
         }
       ]
-    }
+    },
+    "position": "top",
+    "transparent": false
   },
-  "plugins": []
+  "idle": {
+    "lock": 300,
+    "screensaver": 150
+  },
+  "plugins": [],
+  "version": 1
 }

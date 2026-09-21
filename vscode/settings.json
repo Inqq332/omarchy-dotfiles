@@ -1,0 +1,25 @@
+{ "workbench.colorTheme": "Ocean Green: Dark",
+"update.mode": "none",
+"terminal.integrated.profiles.linux": {
+    "bash": {
+        "path": "bash",
+        "icon": "terminal-bash"
+    },
+    "zsh": {
+        "path": "zsh"
+    },
+    "fish": {
+        "path": "fish"
+    },
+    "tmux": {
+        "path": "/usr/bin/tmux"
+    },
+    "pwsh": {
+        "path": "pwsh",
+        "icon": "terminal-powershell"
+    }
+},
+"terminal.integrated.defaultProfile.linux": "tmux",
+"git.autofetch": true,
+"gitlens.graph.details.location": "auto"
+}

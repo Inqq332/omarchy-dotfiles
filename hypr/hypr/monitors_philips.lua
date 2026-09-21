@@ -15,3 +15,4 @@ hl.monitor({
   output = "desc:Xiaomi Corporation Mi monitor 7094010016104",
   disabled = true
 })
+
