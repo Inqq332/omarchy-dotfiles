@@ -23,6 +23,14 @@ sync_d() {
     # Sync a directory from ~/.config/foo → ~/dotfiles/foo
     local src="$1" dst="$2"
     [[ ! -d "$src" ]] && return
+
+    # Guard: if target already exists as a subdirectory of source, stop.
+    # Prevents nvim/nvim/, hypr/hypr/ style duplicates when the script is
+    # run after full installation (e.g. nvim installed via cp -rf).
+    case "$dst" in
+        "$src"/*) echo "⚠️  skip: destination $dst is inside source $src — would create nested duplicates"; return ;;
+    esac
+
     mkdir -p "$dst"
     find "$src" -type f | while IFS= read -r f; do
         local rel="${f#$CONF/}"
