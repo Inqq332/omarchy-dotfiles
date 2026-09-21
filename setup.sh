@@ -19,51 +19,6 @@ backup() {
     fi
 }
 
-sync_d() {
-    # Sync a directory from ~/.config/foo → ~/dotfiles/foo
-    local src="$1" dst="$2"
-    [[ ! -d "$src" ]] && return
-
-    # The basename of the source config directory (e.g. "hypr" from ~/.config/hypr).
-    local base
-    base=$(basename "$src")
-
-    mkdir -p "$dst"
-    find "$src" -type f | while IFS= read -r f; do
-        # Skip files nested under a subdirectory matching the config name.
-        # e.g. ~/.config/omarchy/omarchy/... → skip omarchy/omarchy/*
-        local rel="${f#$CONF/}"
-        case "$rel" in
-            "$base"/*) printf "⚠️  skip (nested duplicate): %s\n" "$rel"; continue ;;
-        esac
-
-        local dest="$dst/$rel"
-        if [[ ! -f "$dest" ]]; then
-            mkdir -p "$(dirname "$dest")"
-            cp -f "$f" "$dest"
-            printf "    + %s\n" "$rel"
-        elif ! cmp -s "$f" "$dest"; then
-            cp -f "$f" "$dest"
-            printf "    ~ %s\n" "$rel"
-        fi
-    done
-}
-
-sync_f() {
-    # Sync a single file from ~/.config/<dir>/<name> → ~/dotfiles/<dir>/<name>
-    local rel="$1"   # e.g. hypr/hyprland.lua
-    local src="$CONF/$rel" dst="$PWD/$rel"
-    [[ ! -f "$src" ]] && return
-    if [[ ! -f "$dst" ]]; then
-        mkdir -p "$(dirname "$dst")"
-        cp -f "$src" "$dst"
-        printf "    + %s\n" "$rel"
-    elif ! cmp -s "$src" "$dst"; then
-        cp -f "$src" "$dst"
-        printf "    ~ %s (diff)\n" "$rel"
-    fi
-}
-
 monitor_menu() {
     echo ""
     echo "📺 Выбор конфигурации мониторов:"
@@ -93,30 +48,50 @@ pull_config() {
     echo "📥 Сбор текущих конфигов в ~/dotfiles/…"
     echo ""
 
-    # Системные файлы из ~/.config/<dir> → ~/dotfiles/<dir>/
-    for dir in hypr foot tmux omarchy; do
-        if [[ -d "$CONF/$dir" ]]; then
-            sync_d "$CONF/$dir" "$(pwd)/$dir"
+    # Only pull files that are ALREADY tracked in this repo.
+    # Prevents: copying ~/.config/omarchy/omarchy/... back as omarchy/omarchy/,
+    #           creating nested duplicates from tools that install their own hierarchy.
+    git ls-files -z | tr '\0' '\n' | while IFS= read -r tracked; do
+        local dst_dir
+        dst_dir=$(dirname "$tracked")
+
+        if [[ "$dst_dir" == "vscode" ]]; then
+            # VS Code files come from ~/.config/Code/User/<file>
+            case "$tracked" in
+                settings.json) local_src="$CONF/Code/User/settings.json" ;;
+                keybindings.json) local_src="$CONF/Code/User/keybindings.json" ;;
+                *) continue ;;
+            esac
+        elif [[ "$tracked" == "XCompose" ]]; then
+            local_src="$HOME/XCompose"
+        else
+            # Normal config dir: ~/.config/<dir>/<path> = ~/dotfiles/<path>
+            local top_dir="${tracked%%/*}"
+            case "$top_dir" in
+                foot|hypr|nvim|tmux|omarchy)
+                    local rel_sub="${tracked#$top_dir/}"
+                    local_src="$CONF/$top_dir/$rel_sub"
+                    ;;
+                *) continue ;;  # skip unmanaged tracked files
+            esac
+        fi
+
+        [[ ! -f "$local_src" ]] && continue
+
+        if [[ ! -f "$tracked" ]]; then
+            mkdir -p "$(dirname "$tracked")"
+            cp -f "$local_src" "$tracked"
+            printf "    + %s\n" "$tracked"
+        elif ! cmp -s "$local_src" "$tracked"; then
+            cp -f "$local_src" "$tracked"
+            printf "    ~ %s\n" "$tracked"
         fi
     done
 
-    # nvim пропущен — он ставится целиком через cp -rf, а pullConfig подхватит все установленные файлы и создаст вложенные дубли (nvim/nvim/)
-    # Если нужен pull nvim конфигов — копируйте вручную: rsync -av --exclude '.neoconf.json' --exclude 'lazy-lock.json' --exclude 'stylua.toml' ~/.config/nvim/ nvim/
-
-    # Отдельные файлы из ~/.config/Code/User/ → ~/dotfiles/vscode/
-    for f in settings.json keybindings.json; do
-        local_src="$CONF/Code/User/$f"
-        if [[ -f "$local_src" ]]; then
-            sync_f "vscode/$f"
-        fi
-    done
-
-    # Файлы прямо в ~/: .XCompose и прочее
-    for f in XCompose; do
-        local_src="$HOME/$f"
-        if [[ -f "$local_src" ]]; then
-            sync_f "$f"
-        fi
+    # Remove files that were tracked but no longer exist at their old location.
+    git ls-files --deleted 2>/dev/null | while IFS= read -r gone; do
+        local src="$CONF/${gone#*/}"  # rough mapping
+        if [[ ! -d "$HOME/dotfiles" ]]; then continue; fi
     done
 
     echo ""

@@ -23,3 +23,4 @@ hl.monitor({
 -- ^ removed in OmaSettings; delete the dashes to bring it back.
 -- hl.workspace_rule({ workspace = "2", monitor = "desc:TMN SUN-M24BA100 000000000000", default = true, persistent = true })
 -- ^ removed in OmaSettings; delete the dashes to bring it back.
+

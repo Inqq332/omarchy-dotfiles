@@ -1,12 +1,5 @@
 {
-  "version": 1,
-  "idle": {
-    "lock": 300,
-    "screensaver": 150
-  },
   "bar": {
-    "position": "top",
-    "transparent": true,
     "centerAnchor": "omarchy.clock",
     "layout": {
       "center": [
@@ -14,15 +7,9 @@
           "id": "omarchy.indicators"
         },
         {
-          "id": "omarchy.microphone"
-        },
-        {
-          "id": "omaconnect"
-        },
-        {
-          "id": "omarchy.clock",
           "format": "ddd d MMM HH:mm",
           "formatAlt": "d MMMM 'W'ww yyyy",
+          "id": "omarchy.clock",
           "verticalFormat": "HH\n—\nmm"
         },
         {
@@ -30,6 +17,12 @@
         },
         {
           "id": "omarchy.weather"
+        },
+        {
+          "id": "omarchy.microphone"
+        },
+        {
+          "id": "omaconnect"
         },
         {
           "id": "omarchy.system-update"
@@ -76,7 +69,14 @@
           "id": "omarchy.power"
         }
       ]
-    }
+    },
+    "position": "top",
+    "transparent": true
   },
-  "plugins": []
+  "idle": {
+    "lock": 300,
+    "screensaver": 150
+  },
+  "plugins": [],
+  "version": 1
 }
