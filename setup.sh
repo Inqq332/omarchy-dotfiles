@@ -83,11 +83,14 @@ pull_config() {
     echo ""
 
     # Системные файлы из ~/.config/<dir> → ~/dotfiles/<dir>/
-    for dir in hypr foot tmux omarchy nvim; do
+    for dir in hypr foot tmux omarchy; do
         if [[ -d "$CONF/$dir" ]]; then
             sync_d "$CONF/$dir" "$(pwd)/$dir"
         fi
     done
+
+    # nvim пропущен — он ставится целиком через cp -rf, а pullConfig подхватит все установленные файлы и создаст вложенные дубли (nvim/nvim/)
+    # Если нужен pull nvim конфигов — копируйте вручную: rsync -av --exclude '.neoconf.json' --exclude 'lazy-lock.json' --exclude 'stylua.toml' ~/.config/nvim/ nvim/
 
     # Отдельные файлы из ~/.config/Code/User/ → ~/dotfiles/vscode/
     for f in settings.json keybindings.json; do
