@@ -1,9 +1,0 @@
-{
-  "id": "custom.sysmon",
-  "kind": "bar-widget",
-  "name": "System Monitor",
-  "description": "Показывает CPU, RAM, GPU и VRAM",
-  "exec": "/home/inq/Work/sys_monitor.sh",
-  "interval": 2000
-}
-
