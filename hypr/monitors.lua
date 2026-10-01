@@ -1,9 +1,26 @@
-local omarchy_gdk_scale = 1
-hl.env("GDK_SCALE", tostring(omarchy_gdk_scale))
+-- Режим: 3 монитора (Philips выключен)
+hl.monitor({
+  output = "desc:TMN SUN-M24BA100 000000000000",
+  mode = "1920x1080@74.97",
+  position = "0x110",
+  scale = 1
+})
 
--- Включен ТОЛЬКО монитор Philips (задайте его разрешение, например "1920x1080@60")
-hl.monitor({ output = "HDMI-A-1", mode = "preferred", position = "0x0", scale = 1 })
+hl.monitor({
+  output = "desc:Xiaomi Corporation Mi monitor 7094010016104",
+  mode = "3440x1440@165.00",
+  position = "1920x0",
+  scale = 1.25
+})
 
--- Выключаем два других монитора
-hl.monitor({ output = "DP-2", disabled = true })
-hl.monitor({ output = "DP-1", disabled = true })
+hl.monitor({
+  output = "desc:Philips Consumer Electronics Company PHILIPS FTV 0x01010101",
+  disabled = true
+})
+
+-- Правила воркспейсов, чтобы окна не улетали
+-- hl.workspace_rule({ workspace = "1", monitor = "desc:Xiaomi Corporation Mi monitor 7094010016104", default = true, persistent = true })
+-- ^ removed in OmaSettings; delete the dashes to bring it back.
+-- hl.workspace_rule({ workspace = "2", monitor = "desc:TMN SUN-M24BA100 000000000000", default = true, persistent = true })
+-- ^ removed in OmaSettings; delete the dashes to bring it back.
+

@@ -2,7 +2,7 @@
 
 CONFIG_DIR="$HOME/.config/hypr"
 # Теперь цель — файл, который создала утилита и который загружается последним:
-TARGET_CONFIG="$CONFIG_DIR/hyprmoncfg-monitors.lua"
+TARGET_CONFIG="$CONFIG_DIR/monitors.lua"
 
 PHILIPS_CONFIG="$CONFIG_DIR/monitors_philips.lua"
 TRIPLE_CONFIG="$CONFIG_DIR/monitors_triple.lua"
